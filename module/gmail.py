@@ -28,7 +28,7 @@ class Gmail:
 
         return response
 
-    def get_latest_emails(self):
+    def get_latest_emails(self, mailbox: str = "INBOX"):
         """
         :return: list
         """
@@ -40,7 +40,7 @@ class Gmail:
             "promotional": []
         }
         try:
-            self.mail.select('INBOX')
+            self.mail.select(mailbox)
             for category in categories:
                 status, response = self.mail.uid('search', 'X-GM-RAW "category:' + category + '"')
 
@@ -53,12 +53,13 @@ class Gmail:
             logging.error(e)
             return None
 
-    def get_email_content(self, uid: int):
+    def get_email_content(self, uid: int, mailbox: str = "INBOX"):
         """
         :param uid: UID of the mail to view content
+        :param mailbox: Mailbox i.e. 'Inbox', '[GMAIL]/All Mail', etc. Use list_mailbox() for view all
         :return:
         """
-        self.mail.select('INBOX')
+        self.mail.select(mailbox)
         status, data = self.mail.uid('fetch', str(uid), '(RFC822)')
         for response_part in data:
             if isinstance(response_part, tuple):
