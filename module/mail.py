@@ -42,7 +42,7 @@ class Mail:
                 raise Exception(f"`mail.uid` Status {status}")
         except Exception as e:
             logging.error(e)
-            return None
+            return []
 
     def get_unread_messages(self, mailbox: str = "Inbox"):
         """
@@ -58,7 +58,7 @@ class Mail:
                 raise Exception(f"mail.search Status {status}")
         except Exception as e:
             logging.error(e)
-            return None
+            return []
 
     # noinspection PyUnresolvedReferences
     def parse_email(self, uid: str, mailbox: str = "Inbox"):
