@@ -6,7 +6,7 @@ import time
 
 def main():
     log.info("Loading Configuration file")
-    config = Config("config.yml").configuration
+    config = Config("config/config.yml").configuration
 
     log.info("Connecting with Gmail - IMAP")
     gmail = Mail(username="G_EMAIL_USERNAME", password="G_PASSWORD", host_name="imap.gmail.com", host_port=993)
