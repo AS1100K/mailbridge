@@ -4,34 +4,34 @@ import logging
 from email.message import Message
 from email import message_from_bytes
 from dotenv import load_dotenv
-from time import time
+from datetime import datetime
 
 load_dotenv()
 
 
-class Gmail:
-    def __init__(self, host_name: str = "imap.gmail.com", host_port: int = 993):
+class Mail:
+    def __init__(self, username: str = "O_EMAIL_USERNAME", password: str = "O_PASSWORD",
+                 host_name: str = "outlook.office365.com", host_port: int = 993):
+        """
+        Connect with the IMAP server. Default Configured for Outlook.
+        :param username: ENV Variable Name
+        :param password: ENV Variable Name
+        :param host_name: IMAP host url
+        :param host_port: IMAP host port
+        """
         try:
             self.mail = imaplib.IMAP4_SSL(host_name, port=host_port)
-            self.mail.login(os.getenv('G_EMAIL_USERNAME'), os.getenv('G_PASSWORD'))
+            # context = ssl.create_default_context()
+            # self.mail.starttls(ssl_context=context)
+
+            logging.info("Logging in Outlook Mail Server")
+            self.mail.login(os.getenv(username), os.getenv(password))
         except Exception as e:
             logging.error(e)
 
-    def list_mailbox(self):
-        code, mailboxes = self.mail.list()
-        response = []
-        for mailbox in mailboxes:
-            mailbox = mailbox.decode('utf-8')
-            mailbox = mailbox.split(") ")[1]
-            mailbox = mailbox.split(' "')[1]
-            mailbox = mailbox.split('"')[0]
-            response.append(mailbox)
-
-        return response
-
-    def get_number_of_emails(self, mailbox: str = "INBOX"):
+    def get_number_of_emails(self, mailbox: str = "Inbox"):
         """
-        :param mailbox: Mailbox i.e. 'Inbox', [GMAIL]/All Mail', etc.
+        :param mailbox: Mailbox i.e. 'Inbox', 'Drafts', etc.
         :return: int
         """
         try:
@@ -44,9 +44,9 @@ class Gmail:
             logging.error(e)
             return None
 
-    def get_unread_messages(self, mailbox: str = "INBOX"):
+    def get_unread_messages(self, mailbox: str = "Inbox"):
         """
-        :param mailbox: Mailbox i.e. 'Inbox', [GMAIL]/All Mail', etc.
+        :param mailbox: Mailbox i.e. 'Inbox', 'Drafts', etc.
         :return: list
         """
         try:
@@ -83,8 +83,14 @@ class Gmail:
         """
         try:
             self.mail.select(mailbox)
+
+            # Parse the input date string
+            parsed_date = datetime.strptime(new_message['date'], '%a, %d %b %Y %H:%M:%S %z (UTC)')
+            # Format the date in the desired format
+            formatted_date = '"' + parsed_date.strftime('%d-%b-%Y %H:%M:%S %z') + '"'
+
             encoded_message = str(new_message).encode('utf-8')
-            status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(time()), encoded_message)
+            status, msg = self.mail.append(mailbox, '', formatted_date, encoded_message)
 
             if status == 'OK':
                 return True
