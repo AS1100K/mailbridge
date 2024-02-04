@@ -31,7 +31,9 @@ def main():
                     message = mail.parse_email(uid, mailbox=config['sync_emails_folder'][i])
 
                     # Save the email
-                    if outlook.append_email(message, mailbox=config['save_emails_folder'][i]) if config['save_emails_in'] == "outlook" else gmail.append_email(message, mailbox=config['save_emails_folder'][i]) == False:
+                    transfer = outlook.append_email(message, mailbox=config['save_emails_folder'][i]) if config['save_emails_in'] == "outlook" else gmail.append_email(message, mailbox=config['save_emails_folder'][i])
+                    if transfer != True:
+                        log.error(f"The email with uid {uid} did not went through")
                         break
 
                     # Delete the email

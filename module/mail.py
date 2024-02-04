@@ -36,6 +36,7 @@ class Mail:
         try:
             log.debug(f"`get_number_of_emails`: mailbox -> {mailbox}")
             status, no_of_emails = self.mail.select(mailbox)
+            self.mail.close()
             if status == 'OK':
                 return no_of_emails
             else:
@@ -53,6 +54,7 @@ class Mail:
             log.debug(f"`get_unread_messages`: mailbox -> {mailbox}")
             self.mail.select(mailbox)
             status, uids = self.mail.search(None, '(UNSEEN)')
+            self.mail.close()
             if status == 'OK':
                 return uids
             else:
@@ -69,8 +71,10 @@ class Mail:
             status, message = self.mail.fetch(uid, 'RFC822')
             if status == 'OK':
                 new_message = message_from_bytes(message[0][1])
+                self.mail.close()
                 return new_message
             else:
+                self.mail.close()
                 raise Exception(message)
         except Exception as e:
             log.error(f"`parse_email -> {e}")
@@ -88,6 +92,7 @@ class Mail:
             self.mail.select(mailbox)
             encoded_message = str(new_message).encode('utf-8')
             status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(utils.parsedate_to_datetime(new_message['date'])), encoded_message)
+            self.mail.close()
 
             if status == 'OK':
                 return True
@@ -105,6 +110,9 @@ class Mail:
             log.debug(f"`delete_email` uid -> {uid} mailbox -> {mailbox}")
             self.mail.select(mailbox)
             self.mail.store(uid, '+FLAGS', '\\Deleted')
+            self.mail.expunge()
+            self.mail.close()
+            return True
         except Exception as e:
             log.error(f"`delete_email` -> {e}")
             return None
