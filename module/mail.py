@@ -107,7 +107,6 @@ class Mail:
         try:
             self.mail.select(mailbox)
             self.mail.store(uid, '+FLAGS', '\\Deleted')
-            self.mail.expunge()
         except Exception as e:
             logging.error(e)
             return None
