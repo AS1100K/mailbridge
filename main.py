@@ -1,6 +1,7 @@
 from module.config import Config
 from module.mail import Mail
 import logging
+import time
 
 
 def main():
@@ -11,28 +12,41 @@ def main():
     gmail = Mail(username="G_EMAIL_USERNAME", password="G_PASSWORD", host_name="imap.gmail.com", host_port=993)
 
     logging.info("Connecting with Outlook - IMAP")
-    outlook = Mail() # Default Configuration for Outlook.com
+    outlook = Mail()  # Default Configuration for Outlook.com
 
-    # Looping through data continuously
-    print(config)
+    # Return gmail or outlook as specified in `save_emails_in`
+    mail = gmail if config['save_emails_in'] == "outlook" else outlook
+
     while True:
         if config['sync_unread_emails']:
-            unread_emails = gmail.get_unread_messages() if config['save_emails_in'] == "outlook" else outlook.get_unread_messages()
+            for i in range(len(config['sync_emails_folder'])):
+                email_uids = mail.get_unread_messages(mailbox=config['sync_emails_folder'][i])
+                for email_uid in email_uids:
+                    uid = email_uid.decode('utf-8')
 
-            if len(unread_emails) >= 1:
-                for unread_email in unread_emails:
-                    uid = unread_email.decode('utf-8')
-                    email = gmail.parse_email(uid) if config['save_emails_in'] == "outlook" else outlook.parse_email(
-                        uid)
-                    outlook.append_email(email) if config['save_emails_in'] == "outlook" else gmail.append_email(email)
+                    # Break if string is empty
+                    if uid == "":
+                        break
 
-                    # Delete Emails
+                    message = mail.parse_email(uid, mailbox=config['sync_emails_folder'][i])
+
+                    # Save the email
+                    if outlook.append_email(message, mailbox=config['save_emails_folder'][i]) if config['save_emails_in'] == "outlook" else gmail.append_email(message, mailbox=config['save_emails_folder'][i]) == False:
+                        break
+
+                    # Delete the email
                     if config['delete_emails_after_transfer']:
-                        gmail.delete_email(uid) if config['save_emails_in'] == "outlook" else outlook.delete_email(uid)
+                        mail.delete_email(uid)
 
-        # Deleting Emails Permanently
-        if config['delete_emails_after_transfer']:
-            gmail.mail.expunge() if config['save_emails_in'] == "outlook" else outlook.mail.expunge()
+            # Permanently Delete Emails
+            if config['delete_emails_after_transfer']:
+                mail.mail.expunge()
+        else:
+            logging.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
+                          "https://github.com/adityajideveloper/outlook-gmail-migration/issues")
+            break
+
+        time.sleep(1)  # Delay of 1 second in next iteration
 
 
 if __name__ == "__main__":
