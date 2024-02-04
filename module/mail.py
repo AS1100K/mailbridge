@@ -1,6 +1,6 @@
 import imaplib
 import os
-import logging
+from module.custom_logging import log
 from email.message import Message
 from email import message_from_bytes, utils
 from dotenv import load_dotenv
@@ -23,10 +23,10 @@ class Mail:
             # context = ssl.create_default_context()
             # self.mail.starttls(ssl_context=context)
 
-            logging.info("Logging in Outlook Mail Server")
+            log.info("log in Outlook Mail Server")
             self.mail.login(os.getenv(username), os.getenv(password))
         except Exception as e:
-            logging.error(e)
+            log.error(e)
 
     def get_number_of_emails(self, mailbox: str = "Inbox"):
         """
@@ -40,7 +40,7 @@ class Mail:
             else:
                 raise Exception(f"`mail.uid` Status {status}")
         except Exception as e:
-            logging.error(e)
+            log.error(e)
             return []
 
     def get_unread_messages(self, mailbox: str = "Inbox"):
@@ -56,7 +56,7 @@ class Mail:
             else:
                 raise Exception(f"mail.search Status {status}")
         except Exception as e:
-            logging.error(e)
+            log.error(e)
             return []
 
     # noinspection PyUnresolvedReferences
@@ -70,7 +70,7 @@ class Mail:
             else:
                 raise Exception(message)
         except Exception as e:
-            logging.error(e)
+            log.error(e)
             return None
 
     def append_email(self, new_message: Message, mailbox: str = 'Inbox'):
@@ -90,7 +90,7 @@ class Mail:
             else:
                 raise Exception(msg)
         except Exception as e:
-            logging.error(e)
+            log.error(e)
             return None
 
     def delete_email(self, uid: str, mailbox: str = 'Inbox'):
@@ -101,7 +101,7 @@ class Mail:
             self.mail.select(mailbox)
             self.mail.store(uid, '+FLAGS', '\\Deleted')
         except Exception as e:
-            logging.error(e)
+            log.error(e)
             return None
 
     def quit(self):
