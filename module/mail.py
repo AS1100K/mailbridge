@@ -2,9 +2,8 @@ import imaplib
 import os
 import logging
 from email.message import Message
-from email import message_from_bytes
+from email import message_from_bytes, utils
 from dotenv import load_dotenv
-from datetime import datetime
 
 load_dotenv()
 
@@ -37,7 +36,7 @@ class Mail:
         try:
             status, no_of_emails = self.mail.select(mailbox)
             if status == 'OK':
-                return no_of_emails.decode('utf-8')
+                return no_of_emails
             else:
                 raise Exception(f"`mail.uid` Status {status}")
         except Exception as e:
@@ -83,14 +82,8 @@ class Mail:
         """
         try:
             self.mail.select(mailbox)
-
-            # Parse the input date string
-            parsed_date = datetime.strptime(new_message['date'], '%a, %d %b %Y %H:%M:%S %z (UTC)')
-            # Format the date in the desired format
-            formatted_date = '"' + parsed_date.strftime('%d-%b-%Y %H:%M:%S %z') + '"'
-
             encoded_message = str(new_message).encode('utf-8')
-            status, msg = self.mail.append(mailbox, '', formatted_date, encoded_message)
+            status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(utils.parsedate_to_datetime(new_message['date'])), encoded_message)
 
             if status == 'OK':
                 return True
