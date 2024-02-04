@@ -86,5 +86,17 @@ class Outlook:
             logging.error(e)
             return None
 
+    def delete_email(self, uid: str, mailbox: str = 'Inbox'):
+        """
+        Delete a specific email from the mailbox
+        """
+        try:
+            self.mail.select(mailbox)
+            self.mail.store(uid, '+FLAGS', '\\Deleted')
+            self.mail.expunge()
+        except Exception as e:
+            logging.error(e)
+            return None
+
     def quit(self):
         self.mail.logout()
