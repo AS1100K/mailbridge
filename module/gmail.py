@@ -30,6 +30,7 @@ class Gmail:
 
     def get_latest_emails(self, mailbox: str = "INBOX"):
         """
+        :param mailbox: Mailbox i.e. 'Inbox', [GMAIL]/All Mail', etc.
         :return: list
         """
         categories = ["Social", "Updates", "Forums", "Promotional"]
