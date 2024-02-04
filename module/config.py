@@ -13,7 +13,7 @@ class Config:
                         raise Exception("`sync_email_folder` and `save_email_folder` length doesn't match.")
                     if type(self.configuration['save_emails_in']) != str:
                         raise Exception("`save_emails_in` must be a string")
-                    if type(self.configuration['delete_email_after_transfer']) != bool:
+                    if type(self.configuration['delete_emails_after_transfer']) != bool:
                         raise Exception("`delete_email_after_transfer` must be a bool")
                     if type(self.configuration['sync_unread_emails']) != bool:
                         raise Exception("`sync_unread_emails` must be a bool")
