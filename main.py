@@ -43,7 +43,7 @@ def main():
                         mail.delete_email(uid, mailbox=config['sync_emails_folder'][i])
         else:
             log.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
-                      "https://github.com/adityajideveloper/outlook-gmail-migration/issues")
+                      "https://github.com/adityajideveloper/mailbridge/issues")
             break
 
         time.sleep(1)  # Delay of 1 second in next iteration
