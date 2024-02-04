@@ -16,6 +16,18 @@ class Gmail:
         except Exception as e:
             logging.error(e)
 
+    def list_mailbox(self):
+        code, mailboxes = self.mail.list()
+        response = []
+        for mailbox in mailboxes:
+            mailbox = mailbox.decode('utf-8')
+            mailbox = mailbox.split(") ")[1]
+            mailbox = mailbox.split(' "')[1]
+            mailbox = mailbox.split('"')[0]
+            response.append(mailbox)
+
+        return response
+
     def get_latest_emails(self):
         """
         :return: list
