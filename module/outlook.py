@@ -2,6 +2,7 @@ import imaplib
 import os
 import logging
 from email.message import Message
+from email import message_from_bytes
 from dotenv import load_dotenv
 from time import time
 
@@ -47,6 +48,20 @@ class Outlook:
                 return uids
             else:
                 raise Exception(f"mail.search Status {status}")
+        except Exception as e:
+            logging.error(e)
+            return None
+
+    # noinspection PyUnresolvedReferences
+    def parse_email(self, uid: str, mailbox: str = "Inbox"):
+        try:
+            self.mail.select(mailbox)
+            status, message = self.mail.fetch(uid, 'RFC822')
+            if status == 'OK':
+                new_message = message_from_bytes(message[0][1])
+                return new_message
+            else:
+                raise Exception(message)
         except Exception as e:
             logging.error(e)
             return None
