@@ -2,7 +2,7 @@ import imaplib
 import email
 import os
 import logging
-
+from email.message import Message
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,7 +28,7 @@ class Gmail:
 
         return response
 
-    def get_no_of_emails(self, mailbox: str = "INBOX"):
+    def get_number_of_emails(self, mailbox: str = "INBOX"):
         """
         :param mailbox: Mailbox i.e. 'Inbox', [GMAIL]/All Mail', etc.
         :return: int

@@ -19,7 +19,7 @@ class Outlook:
         except Exception as e:
             logging.error(e)
 
-    def get_no_of_emails(self, mailbox: str = "Inbox"):
+    def get_number_of_emails(self, mailbox: str = "Inbox"):
         """
         :param mailbox: Mailbox i.e. 'Inbox', 'Drafts', etc.
         :return: int
