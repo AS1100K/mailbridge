@@ -31,8 +31,10 @@ def main():
                     message = mail.parse_email(uid, mailbox=config['sync_emails_folder'][i])
 
                     # Save the email
-                    transfer = outlook.append_email(message, mailbox=config['save_emails_folder'][i]) if config['save_emails_in'] == "outlook" else gmail.append_email(message, mailbox=config['save_emails_folder'][i])
-                    if transfer != True:
+                    transfer = outlook.append_email(message, mailbox=config['save_emails_folder'][i]) \
+                        if config['save_emails_in'] == "outlook" \
+                        else gmail.append_email(message, mailbox=config['save_emails_folder'][i])
+                    if not transfer:
                         log.error(f"The email with uid {uid} did not went through")
                         break
 
@@ -41,7 +43,7 @@ def main():
                         mail.delete_email(uid, mailbox=config['sync_emails_folder'][i])
         else:
             log.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
-                          "https://github.com/adityajideveloper/outlook-gmail-migration/issues")
+                      "https://github.com/adityajideveloper/outlook-gmail-migration/issues")
             break
 
         time.sleep(1)  # Delay of 1 second in next iteration
