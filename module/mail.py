@@ -26,7 +26,7 @@ class Mail:
             log.info("log in Outlook Mail Server")
             self.mail.login(os.getenv(username), os.getenv(password))
         except Exception as e:
-            log.error(e)
+            log.error(f"`__init__` -> {e}")
 
     def get_number_of_emails(self, mailbox: str = "Inbox"):
         """
@@ -34,13 +34,14 @@ class Mail:
         :return: int
         """
         try:
+            log.debug(f"`get_number_of_emails`: mailbox -> {mailbox}")
             status, no_of_emails = self.mail.select(mailbox)
             if status == 'OK':
                 return no_of_emails
             else:
                 raise Exception(f"`mail.uid` Status {status}")
         except Exception as e:
-            log.error(e)
+            log.error(f"`get_number_of_emails` -> {e}")
             return []
 
     def get_unread_messages(self, mailbox: str = "Inbox"):
@@ -49,6 +50,7 @@ class Mail:
         :return: list
         """
         try:
+            log.debug(f"`get_unread_messages`: mailbox -> {mailbox}")
             self.mail.select(mailbox)
             status, uids = self.mail.search(None, '(UNSEEN)')
             if status == 'OK':
@@ -56,12 +58,13 @@ class Mail:
             else:
                 raise Exception(f"mail.search Status {status}")
         except Exception as e:
-            log.error(e)
+            log.error(f"`get_unread_messages` -> {e}")
             return []
 
     # noinspection PyUnresolvedReferences
     def parse_email(self, uid: str, mailbox: str = "Inbox"):
         try:
+            log.debug(f"Parsing Email UID -> {uid} mailbox -> {mailbox}")
             self.mail.select(mailbox)
             status, message = self.mail.fetch(uid, 'RFC822')
             if status == 'OK':
@@ -70,7 +73,7 @@ class Mail:
             else:
                 raise Exception(message)
         except Exception as e:
-            log.error(e)
+            log.error(f"`parse_email -> {e}")
             return None
 
     def append_email(self, new_message: Message, mailbox: str = 'Inbox'):
@@ -81,6 +84,7 @@ class Mail:
         :return: boolean
         """
         try:
+            log.debug(f"`append_email` mailbox -> {mailbox}")
             self.mail.select(mailbox)
             encoded_message = str(new_message).encode('utf-8')
             status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(utils.parsedate_to_datetime(new_message['date'])), encoded_message)
@@ -90,7 +94,7 @@ class Mail:
             else:
                 raise Exception(msg)
         except Exception as e:
-            log.error(e)
+            log.error(f"`append_email` -> {e}")
             return None
 
     def delete_email(self, uid: str, mailbox: str = 'Inbox'):
@@ -98,10 +102,11 @@ class Mail:
         Delete a specific email from the mailbox
         """
         try:
+            log.debug(f"`delete_email` uid -> {uid} mailbox -> {mailbox}")
             self.mail.select(mailbox)
             self.mail.store(uid, '+FLAGS', '\\Deleted')
         except Exception as e:
-            log.error(e)
+            log.error(f"`delete_email` -> {e}")
             return None
 
     def quit(self):
