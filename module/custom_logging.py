@@ -3,7 +3,7 @@ import os
 import sys
 
 
-def getLogger(name='root', loglevel='INFO', logfile='app.log'):
+def getLogger(name='root', loglevel='INFO', logfile='app.log', debug_mode=False):
     logger = logging.getLogger(name)
 
     # if logger 'name' already exists, return it to avoid logging duplicate
@@ -25,11 +25,12 @@ def getLogger(name='root', loglevel='INFO', logfile='app.log'):
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    # Create a stream handler to log only warning, error, and critical messages to console
-    stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setLevel(logging.WARNING)
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
+    # Create a stream handler to log all messages to console in debug mode
+    if debug_mode:
+        stream_handler = logging.StreamHandler(sys.stdout)
+        stream_handler.setLevel(logging.DEBUG)
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
 
     # Log the script running information if logger name is 'root'
     if logger.name == 'root':
@@ -40,5 +41,10 @@ def getLogger(name='root', loglevel='INFO', logfile='app.log'):
     return logger
 
 
+# Determine if script is run in debug mode
+DEBUG_MODE = False
+if __debug__:
+    DEBUG_MODE = True
+
 # Create the logger
-log = getLogger('root')
+log = getLogger('root', debug_mode=DEBUG_MODE)
