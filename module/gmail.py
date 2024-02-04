@@ -4,6 +4,7 @@ import os
 import logging
 from email.message import Message
 from dotenv import load_dotenv
+from time import time
 
 load_dotenv()
 
@@ -70,6 +71,26 @@ class Gmail:
         for response_part in data:
             if isinstance(response_part, tuple):
                 return email.message_from_bytes(response_part[1])
+
+    def append_email(self, new_message: Message, mailbox: str = 'Inbox'):
+        """
+        Add the new_message to the specified mailbox.
+        :param new_message: Message in the format of email.message.Message
+        :param mailbox: Mailbox i.e. 'Inbox', 'Drafts', etc.
+        :return: boolean
+        """
+        try:
+            self.mail.select(mailbox)
+            encoded_message = str(new_message).encode('utf-8')
+            status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(time()), encoded_message)
+
+            if status == 'OK':
+                return True
+            else:
+                raise Exception(msg)
+        except Exception as e:
+            logging.error(e)
+            return None
 
     def quit(self):
         self.mail.logout()
