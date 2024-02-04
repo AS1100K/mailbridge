@@ -28,28 +28,17 @@ class Gmail:
 
         return response
 
-    def get_latest_emails(self, mailbox: str = "INBOX"):
+    def get_no_of_emails(self, mailbox: str = "INBOX"):
         """
         :param mailbox: Mailbox i.e. 'Inbox', [GMAIL]/All Mail', etc.
-        :return: list
+        :return: int
         """
-        categories = ["Social", "Updates", "Forums", "Promotional"]
-        data = {
-            "social": [],
-            "updates": [],
-            "forums": [],
-            "promotional": []
-        }
         try:
-            self.mail.select(mailbox)
-            for category in categories:
-                status, response = self.mail.uid('search', 'X-GM-RAW "category:' + category + '"')
-
-                # get email ids list
-                response = response[0].decode('utf-8').split()
-                response.reverse()
-                data[category.lower()].append(response)
-            return data
+            status, no_of_emails = self.mail.select(mailbox)
+            if status == 'OK':
+                return no_of_emails.decode('utf-8')
+            else:
+                raise Exception(f"`mail.uid` Status {status}")
         except Exception as e:
             logging.error(e)
             return None

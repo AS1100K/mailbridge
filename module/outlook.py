@@ -19,5 +19,20 @@ class Outlook:
         except Exception as e:
             logging.error(e)
 
+    def get_no_of_emails(self, mailbox: str = "Inbox"):
+        """
+        :param mailbox: Mailbox i.e. 'Inbox', 'Drafts', etc.
+        :return: int
+        """
+        try:
+            status, no_of_emails = self.mail.select(mailbox)
+            if status == 'OK':
+                return no_of_emails.decode('utf-8')
+            else:
+                raise Exception(f"`mail.uid` Status {status}")
+        except Exception as e:
+            logging.error(e)
+            return None
+
     def quit(self):
         self.mail.logout()
