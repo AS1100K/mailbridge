@@ -64,3 +64,6 @@ class Gmail:
         for response_part in data:
             if isinstance(response_part, tuple):
                 return email.message_from_bytes(response_part[1])
+
+    def quit(self):
+        self.mail.logout()
