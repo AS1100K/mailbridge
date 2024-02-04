@@ -1,6 +1,7 @@
 ---
 save_emails_in: outlook # outlook: Default | gmail
 delete_email_after_transfer: true # true: default | false
+sync_unread_emails: true # true: default | false
 sync_emails_folder: # List of folders from which emails will be saved
   - Inbox
   - Draft
