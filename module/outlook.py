@@ -34,5 +34,21 @@ class Outlook:
             logging.error(e)
             return None
 
+    def get_unread_messages(self, mailbox: str = "Inbox"):
+        """
+        :param mailbox: Mailbox i.e. 'Inbox', 'Drafts', etc.
+        :return: list
+        """
+        try:
+            self.mail.select(mailbox)
+            status, uids = self.mail.search(None, '(UNSEEN)')
+            if status == 'OK':
+                return uids
+            else:
+                raise Exception(f"mail.search Status {status}")
+        except Exception as e:
+            logging.error(e)
+            return None
+
     def quit(self):
         self.mail.logout()

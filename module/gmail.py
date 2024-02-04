@@ -43,6 +43,22 @@ class Gmail:
             logging.error(e)
             return None
 
+    def get_unread_messages(self, mailbox: str = "INBOX"):
+        """
+        :param mailbox: Mailbox i.e. 'Inbox', [GMAIL]/All Mail', etc.
+        :return: list
+        """
+        try:
+            self.mail.select(mailbox)
+            status, uids = self.mail.search(None, '(UNSEEN)')
+            if status == 'OK':
+                return uids
+            else:
+                raise Exception(f"mail.search Status {status}")
+        except Exception as e:
+            logging.error(e)
+            return None
+
     def get_email_content(self, uid: int, mailbox: str = "INBOX"):
         """
         :param uid: UID of the mail to view content
