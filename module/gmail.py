@@ -18,7 +18,7 @@ class Gmail:
 
     def get_latest_emails(self):
         """
-        :return: tuple
+        :return: list
         """
         categories = ["Social", "Updates", "Forums", "Promotional"]
         data = {
