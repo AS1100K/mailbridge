@@ -1,8 +1,8 @@
 import imaplib
-import email
 import os
 import logging
 from email.message import Message
+from email import message_from_bytes
 from dotenv import load_dotenv
 from time import time
 
@@ -60,17 +60,19 @@ class Gmail:
             logging.error(e)
             return None
 
-    def get_email_content(self, uid: int, mailbox: str = "INBOX"):
-        """
-        :param uid: UID of the mail to view content
-        :param mailbox: Mailbox i.e. 'Inbox', '[GMAIL]/All Mail', etc. Use list_mailbox() for view all
-        :return:
-        """
-        self.mail.select(mailbox)
-        status, data = self.mail.uid('fetch', str(uid), '(RFC822)')
-        for response_part in data:
-            if isinstance(response_part, tuple):
-                return email.message_from_bytes(response_part[1])
+    # noinspection PyUnresolvedReferences
+    def parse_email(self, uid: str, mailbox: str = "Inbox"):
+        try:
+            self.mail.select(mailbox)
+            status, message = self.mail.fetch(uid, 'RFC822')
+            if status == 'OK':
+                new_message = message_from_bytes(message[0][1])
+                return new_message
+            else:
+                raise Exception(message)
+        except Exception as e:
+            logging.error(e)
+            return None
 
     def append_email(self, new_message: Message, mailbox: str = 'Inbox'):
         """
