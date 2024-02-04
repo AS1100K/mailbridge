@@ -1,17 +1,17 @@
 from module.config import Config
 from module.mail import Mail
-import logging
+from module.custom_logging import log
 import time
 
 
 def main():
-    logging.info("Loading Configuration file")
+    log.info("Loading Configuration file")
     config = Config("config.yml").configuration
 
-    logging.info("Connecting with Gmail - IMAP")
+    log.info("Connecting with Gmail - IMAP")
     gmail = Mail(username="G_EMAIL_USERNAME", password="G_PASSWORD", host_name="imap.gmail.com", host_port=993)
 
-    logging.info("Connecting with Outlook - IMAP")
+    log.info("Connecting with Outlook - IMAP")
     outlook = Mail()  # Default Configuration for Outlook.com
 
     # Return gmail or outlook as specified in `save_emails_in`
@@ -36,13 +36,9 @@ def main():
 
                     # Delete the email
                     if config['delete_emails_after_transfer']:
-                        mail.delete_email(uid)
-
-            # Permanently Delete Emails
-            if config['delete_emails_after_transfer']:
-                mail.mail.expunge()
+                        mail.delete_email(uid, mailbox=config['sync_emails_folder'][i])
         else:
-            logging.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
+            log.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
                           "https://github.com/adityajideveloper/outlook-gmail-migration/issues")
             break
 
