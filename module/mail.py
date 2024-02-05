@@ -111,20 +111,5 @@ class Mail:
             log.error(f"`append_email` -> {e}")
             return False
 
-    def delete_email(self, uid: str, mailbox: str = 'Inbox'):
-        """
-        Delete a specific email from the mailbox
-        """
-        try:
-            log.debug(f"`delete_email` uid -> {uid} mailbox -> {mailbox}")
-            self.mail.select(mailbox)
-            self.mail.store(uid, '+FLAGS', '\\Deleted')
-            self.mail.expunge()
-            self.mail.close()
-            return True
-        except Exception as e:
-            log.error(f"`delete_email` -> {e}")
-            return None
-
     def quit(self):
         self.mail.logout()

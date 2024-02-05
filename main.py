@@ -42,7 +42,13 @@ def main():
 
                     # Delete the email
                     if config['delete_emails_after_transfer']:
-                        mail.delete_email(email_uid, mailbox=config['sync_emails_folder'][i])
+                        mail.mail.select(config['sync_emails_folder'][i])
+                        mail.mail.store(email_uid, '+FLAGS', '\\Deleted')
+                        mail.mail.close()
+
+                mail.mail.select(config['sync_emails_folder'][i])
+                mail.mail.expunge()
+                mail.mail.close()
         else:
             log.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
                       "https://github.com/adityajideveloper/mailbridge/issues")
