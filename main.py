@@ -22,7 +22,7 @@ def main():
             for i in range(len(config['sync_emails_folder'])):
                 email_uids = mail.get_unread_messages(mailbox=config['sync_emails_folder'][i])
                 for email_uid in email_uids:
-                    uid = email_uid.decode('utf-8')
+                    uid = email_uid
 
                     # Break if string is empty
                     if uid == "":
