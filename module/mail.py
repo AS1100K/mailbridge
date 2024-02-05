@@ -99,7 +99,7 @@ class Mail:
                 raise Exception(msg)
         except Exception as e:
             log.error(f"`append_email` -> {e}")
-            return None
+            return False
 
     def delete_email(self, uid: str, mailbox: str = 'Inbox'):
         """
