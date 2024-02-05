@@ -21,9 +21,9 @@ def getLogger(name='root', loglevel='INFO', logfile='app.log', debug_mode=False)
     formatter = logging.Formatter(fmt, fmt_date)
 
     # Create a file handler to log all messages
-    file_handler = logging.FileHandler(logfile)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    # file_handler = logging.FileHandler(logfile)
+    # file_handler.setFormatter(formatter)
+    # logger.addHandler(file_handler)
 
     # Create a stream handler to log all messages to console in debug mode
     if debug_mode:
