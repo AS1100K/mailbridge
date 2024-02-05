@@ -43,4 +43,5 @@ Mail Bridge is a simple Python program that let you choose what mailbox _(i.e. O
 | sync_unread_emails           | To transfer only unread emails                             | `true`               | `True`   |
 | sync_emails_folder           | Email folder from which emails will be transferred         | `Array`              | `True`   |
 | save_emails_folder           | Email folder to which emails will be transferred           | `Array`              | `True`   |
+
 _**NOTE: `sync_emails_folder` and `save_emails_folder` must be in same order from top to bottom as you intend them to work.**_
