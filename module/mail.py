@@ -2,7 +2,9 @@ import imaplib
 import os
 from module.custom_logging import log
 from email.message import Message
-from email import message_from_bytes, utils
+from email import message_from_bytes
+from email.utils import parsedate_to_datetime as p_dt
+import pytz
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -87,10 +89,18 @@ class Mail:
         :return: boolean
         """
         try:
-            log.debug(f"`append_email` mailbox -> {mailbox}")
+            log.debug(f"`append_email` mailbox -> {mailbox} new_message['date'] -> {new_message['date']}")
+
+            datetime_obj = p_dt(new_message['date'])
+            # Check if the datetime is timezone aware
+            if datetime_obj.tzinfo is None or datetime_obj.tzinfo.utcoffset(datetime_obj) is None:
+                # If not timezone-aware, set the timezone to UTC
+                datetime_obj = datetime_obj.replace(tzinfo=pytz.utc)
+
+            log.info(f"Parsed Date Time -> {imaplib.Time2Internaldate(datetime_obj)}")
             self.mail.select(mailbox)
             encoded_message = str(new_message).encode('utf-8')
-            status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(utils.parsedate_to_datetime(new_message['date'])), encoded_message)
+            status, msg = self.mail.append(mailbox, '', imaplib.Time2Internaldate(datetime_obj), encoded_message)
             self.mail.close()
 
             if status == 'OK':
