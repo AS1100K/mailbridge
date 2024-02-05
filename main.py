@@ -22,25 +22,24 @@ def main():
             for i in range(len(config['sync_emails_folder'])):
                 email_uids = mail.get_unread_messages(mailbox=config['sync_emails_folder'][i])
                 for email_uid in email_uids:
-                    uid = email_uid
-
                     # Break if string is empty
-                    if uid == "":
+                    if email_uid == "":
                         break
 
-                    message = mail.parse_email(uid, mailbox=config['sync_emails_folder'][i])
+                    message = mail.parse_email(email_uid, mailbox=config['sync_emails_folder'][i])
 
                     # Save the email
                     transfer = outlook.append_email(message, mailbox=config['save_emails_folder'][i]) \
                         if config['save_emails_in'] == "outlook" \
                         else gmail.append_email(message, mailbox=config['save_emails_folder'][i])
                     if not transfer:
-                        log.error(f"The email with uid {uid} did not went through")
+                        log.error(f"The email with uid {email_uid} did not went through")
                         break
 
                     # Delete the email
                     if config['delete_emails_after_transfer']:
-                        mail.delete_email(uid, mailbox=config['sync_emails_folder'][i])
+                        mail.delete_email(email_uid, mailbox=config['sync_emails_folder'][i])
+                        break
         else:
             log.error("`sync_unread_emails` == False is not supported till now. Post your issue on "
                       "https://github.com/adityajideveloper/mailbridge/issues")
