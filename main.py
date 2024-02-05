@@ -27,6 +27,10 @@ def main():
                         break
 
                     message = mail.parse_email(email_uid, mailbox=config['sync_emails_folder'][i])
+                    # Break is Parsing Failed
+                    if message is None:
+                        log.error("Email Message didn't parsed.")
+                        break
 
                     # Save the email
                     transfer = outlook.append_email(message, mailbox=config['save_emails_folder'][i]) \
