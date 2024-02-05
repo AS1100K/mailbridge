@@ -69,12 +69,11 @@ class Mail:
             log.debug(f"Parsing Email UID -> {uid} mailbox -> {mailbox}")
             self.mail.select(mailbox)
             status, message = self.mail.fetch(uid, 'RFC822')
+            self.mail.close()
             if status == 'OK':
                 new_message = message_from_bytes(message[0][1])
-                self.mail.close()
                 return new_message
             else:
-                self.mail.close()
                 raise Exception(message)
         except Exception as e:
             log.error(f"`parse_email -> {e}")
