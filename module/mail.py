@@ -56,7 +56,7 @@ class Mail:
             status, uids = self.mail.search(None, '(UNSEEN)')
             self.mail.close()
             if status == 'OK':
-                return uids
+                return uids[0].decode('utf-8').split()
             else:
                 raise Exception(f"mail.search Status {status}")
         except Exception as e:
