@@ -25,7 +25,7 @@ class Mail:
             # context = ssl.create_default_context()
             # self.mail.starttls(ssl_context=context)
 
-            log.info("log in Outlook Mail Server")
+            log.info("logging into Mail Server")
             self.mail.login(os.getenv(username), os.getenv(password))
         except Exception as e:
             log.error(f"`__init__` -> {e}")
@@ -55,7 +55,7 @@ class Mail:
         try:
             log.debug(f"`get_unread_messages`: mailbox -> {mailbox}")
             self.mail.select(mailbox)
-            status, uids = self.mail.search(None, '(UNSEEN)')
+            status, uids = self.mail.uid('search', '(UNSEEN)')
             self.mail.close()
             if status == 'OK':
                 return uids[0].decode('utf-8').split()
@@ -70,7 +70,7 @@ class Mail:
         try:
             log.debug(f"Parsing Email UID -> {uid} mailbox -> {mailbox}")
             self.mail.select(mailbox)
-            status, message = self.mail.fetch(uid, 'RFC822')
+            status, message = self.mail.uid('fetch', uid, 'RFC822')
             self.mail.close()
             if status == 'OK':
                 new_message = message_from_bytes(message[0][1])
